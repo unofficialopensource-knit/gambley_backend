@@ -6,5 +6,6 @@ test/
 .docker/Dockerfile
 requirements/test.txt
 .*ignore
+.python-version
 *.yml
 *.md
