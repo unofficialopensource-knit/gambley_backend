@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY requirements/prod.txt requirements.txt
 
-RUN pip install --requirement requirements.txt \
+RUN pip install --no-cache-dir --requirement requirements.txt \
     && useradd -u 1234 app_user
 
 USER app_user
