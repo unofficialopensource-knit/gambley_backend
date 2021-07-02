@@ -48,19 +48,13 @@ jobs:
           pip install --requirement requirements/prod.txt
 
       - name: "Run black for formatting"
-        run: |
-          source scripts/pipeline_utils.sh
-          code_formatting
+        run: black --config config/pyproject.toml .
 
       - name: "Run flake8 for linting"
-        run: |
-          source scripts/pipeline_utils.sh
-          static_code_analysis
+        run: flake8 --config config/setup.cfg .
 
       - name: "Run isort for imports formatting"
-        run: |
-          source scripts/pipeline_utils.sh
-          import_formatting
+        run: isort --check --settings-file config/pyproject.toml .
 
   build:
     if: ${{ github.event_name == 'pull_request' }}
