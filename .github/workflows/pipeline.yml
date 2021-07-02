@@ -1,0 +1,74 @@
+name: "Pipeline"
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .docker/Dockerfile
+      - .github/workflows/*.yml
+      - config/*.py
+      - requirements/*.txt
+      - src/**/*.py
+      - tests/**/*.py
+  push:
+    branches:
+      - release
+    paths:
+      - .docker/Dockerfile
+      - .github/workflows/*.yml
+      - config/*.py
+      - requirements/*.txt
+      - src/**/*.py
+      - tests/**/*.py
+
+jobs:
+  test:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.9.6"
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+
+      - name: "Install test dependencies"
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install --requirement requirements/test.txt
+          pip install --requirement requirements/prod.txt
+
+      - name: "Run black for formatting"
+        run: |
+          source scripts/pipeline_utils.sh
+          code_formatting
+
+      - name: "Run flake8 for linting"
+        run: |
+          source scripts/pipeline_utils.sh
+          static_code_analysis
+
+      - name: "Run isort for imports formatting"
+        run: |
+          source scripts/pipeline_utils.sh
+          import_formatting
+
+  build:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    needs:
+      - test
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Build docker image"
+        run: docker build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
