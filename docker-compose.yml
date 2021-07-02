@@ -2,7 +2,7 @@ version: "3.8"
 
 
 networks:
-    backemnd:
+    backend:
         name: backend
 
 
@@ -15,6 +15,6 @@ services:
         networks:
             - backend
         ports:
-            - 8001:8000
+            - 8000:8000
         volumes:
             - .:/usr/src/app
