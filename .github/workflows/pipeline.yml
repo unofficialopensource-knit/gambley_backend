@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - .docker/Dockerfile
+      - .docker/*
       - .github/workflows/*.yml
       - config/*.py
       - requirements/*.txt
@@ -15,7 +15,7 @@ on:
     branches:
       - release
     paths:
-      - .docker/Dockerfile
+      - .docker/*
       - .github/workflows/*.yml
       - config/*.py
       - requirements/*.txt
