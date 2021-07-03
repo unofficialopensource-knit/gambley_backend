@@ -104,26 +104,49 @@ jobs:
   #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
   #       run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
 
-  build:
-    if: ${{ github.event_name == 'pull_request' }}
+  # build:
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   runs-on: "ubuntu-20.04"
+  #   needs:
+  #     - security
+  #   steps:
+  #     - uses: actions/checkout@v2
+
+  #     - name: "Build docker image"
+  #       run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+
+  # unit-test:
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   runs-on: "ubuntu-20.04"
+  #   needs:
+  #     - build
+  #   steps:
+  #     - uses: actions/checkout@v2
+
+  #     - name: "Runs unit test"
+  #       run: |
+  #         docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+  #         docker container run --rm gambley_backend:${{ github.sha }} pytest --help
+
+  integration-test:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: "ubuntu-20.04"
-    # needs:
-    #   - security
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Build docker image"
-        run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-
-  test:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: "ubuntu-20.04"
-    needs:
-      - build
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: "Runs unit test"
+      - name: "Runs Integration test"
         run: |
           docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
           docker container run --rm gambley_backend:${{ github.sha }} pytest --help
+
+  deploy:
+    if: ${{ github.event_name == 'pull_request' }}
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release' }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Logs in Heroku Container Registry"
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
