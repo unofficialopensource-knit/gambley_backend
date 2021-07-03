@@ -56,19 +56,19 @@ jobs:
       - name: "Run isort for imports formatting"
         run: isort --check --settings-file config/pyproject.toml .
 
-  # security:
-  #   if: ${{ github.event_name == 'pull_request' }}
-  #   runs-on: "ubuntu-20.04"
-  #   needs:
-  #     - test
-  #   steps:
-  #     - uses: actions/checkout@v2
+  security:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    needs:
+      - test
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - name: "Run snyk to check for vulnerabilities"
-  #       continue-on-error: true
-  #       uses: snyk/actions/python@master
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: "Run snyk to check for vulnerabilities"
+        continue-on-error: true
+        uses: snyk/actions/python@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   # build:
   #   if: ${{ github.event_name == 'pull_request' }}
