@@ -76,10 +76,15 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
         run: snyk auth $SNYK_TOKEN
 
-      - name: "Enable snyk monitoring"
+      - name: "Enable snyk test"
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-        run: snyk monitor
+        run: snyk test
+
+      # - name: "Enable snyk monitoring"
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+      #   run: snyk monitor
 
   # build:
   #   if: ${{ github.event_name == 'pull_request' }}
