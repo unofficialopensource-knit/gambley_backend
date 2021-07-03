@@ -99,10 +99,10 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
         run: snyk test --command=python3 --file=requirements/prod.txt --package-manager=pip
 
-      # - name: "Enable snyk monitoring"
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-      #   run: snyk monitor
+      - name: "Enable snyk monitoring"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+        run: snyk monitor
 
   # build:
   #   if: ${{ github.event_name == 'pull_request' }}
