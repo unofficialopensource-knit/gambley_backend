@@ -104,29 +104,26 @@ jobs:
   #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
   #       run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
 
-  # build:
-  #   if: ${{ github.event_name == 'pull_request' }}
-  #   runs-on: "ubuntu-20.04"
-  #   needs:
-  #     - security
-  #   steps:
-  #     - uses: actions/checkout@v2
-
-  #     - name: "Build docker image"
-  #       run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-
-  test:
+  build:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: "ubuntu-20.04"
-    # needs:
-    #   - build
+    needs:
+      - security
     steps:
       - uses: actions/checkout@v2
 
       - name: "Build docker image"
         run: |
           docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-          docker image save --output gambley.tar.gz
+          docker image save --output gambley_backend.tar.gz gambley_backend:${{ github.sha }} .
+
+  test:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v2
 
       - name: "Runs unit test"
         run: |
