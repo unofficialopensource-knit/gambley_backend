@@ -154,4 +154,6 @@ jobs:
       - name: "Build the image"
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:push --app gambley_backend web
+        run: |
+          cp .docker/Dockerfile .
+          heroku container:push --app gambley-backend-web web
