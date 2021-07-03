@@ -7,7 +7,7 @@ on:
     paths:
       - .docker/*
       - .github/workflows/*.yml
-      - config/*.py
+      - config/*
       - requirements/*.txt
       - src/**/*.py
       - tests/**/*.py
@@ -23,7 +23,7 @@ on:
       - tests/**/*.py
 
 jobs:
-  test:
+  lint:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: "ubuntu-20.04"
     steps:
@@ -56,13 +56,108 @@ jobs:
       - name: "Run isort for imports formatting"
         run: isort --check --settings-file config/pyproject.toml .
 
+  security:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    needs:
+      - lint
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14.16.1"
+
+      - name: "Install snyk"
+        run: npm install -g snyk
+
+      - name: "Authenticate snyk"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+        run: snyk auth $SNYK_TOKEN
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.9.6"
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
+
+      - name: "Install test dependencies"
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install --requirement requirements/prod.txt
+          pip install --requirement requirements/test.txt
+
+      - name: "Enable snyk test"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+        run: snyk test --command=python3 --file=requirements/prod.txt --package-manager=pip
+
+      - name: "Enable snyk monitoring"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+        run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
+
   build:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: "ubuntu-20.04"
     needs:
-      - test
+      - security
     steps:
       - uses: actions/checkout@v2
 
       - name: "Build docker image"
-        run: docker build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+        run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+
+  unit-test:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Runs unit test"
+        run: |
+          docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+          docker container run --rm gambley_backend:${{ github.sha }} pytest --help
+
+  integration-test:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Runs Integration test"
+        run: |
+          docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+          docker container run --rm gambley_backend:${{ github.sha }} pytest --help
+
+  deploy:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release' }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Logs in Heroku Container Registry"
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      - name: "Build & Push the image"
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          cp .docker/Dockerfile .
+          heroku container:push --app gambley-backend-web web
+
+      - name: "Release the image"
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release --app gambley-backend-web web
