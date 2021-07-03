@@ -23,103 +23,103 @@ on:
       - tests/**/*.py
 
 jobs:
-  # lint:
-  #   if: ${{ github.event_name == 'pull_request' }}
-  #   runs-on: "ubuntu-20.04"
-  #   steps:
-  #     - uses: actions/checkout@v2
+  lint:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - uses: actions/setup-python@v2
-  #       with:
-  #         python-version: "3.9.6"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.9.6"
 
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: ~/.cache/pip
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
-  #           ${{ runner.os }}-
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
 
-  #     - name: "Install test dependencies"
-  #       run: |
-  #         pip install --upgrade pip setuptools wheel
-  #         pip install --requirement requirements/test.txt
-  #         pip install --requirement requirements/prod.txt
+      - name: "Install test dependencies"
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install --requirement requirements/test.txt
+          pip install --requirement requirements/prod.txt
 
-  #     - name: "Run black for formatting"
-  #       run: black --config config/pyproject.toml .
+      - name: "Run black for formatting"
+        run: black --config config/pyproject.toml .
 
-  #     - name: "Run flake8 for linting"
-  #       run: flake8 --config config/setup.cfg .
+      - name: "Run flake8 for linting"
+        run: flake8 --config config/setup.cfg .
 
-  #     - name: "Run isort for imports formatting"
-  #       run: isort --check --settings-file config/pyproject.toml .
+      - name: "Run isort for imports formatting"
+        run: isort --check --settings-file config/pyproject.toml .
 
-  # security:
-  #   if: ${{ github.event_name == 'pull_request' }}
-  #   runs-on: "ubuntu-20.04"
-  #   needs:
-  #     - lint
-  #   steps:
-  #     - uses: actions/checkout@v2
+  security:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    needs:
+      - lint
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: "14.16.1"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14.16.1"
 
-  #     - name: "Install snyk"
-  #       run: npm install -g snyk
+      - name: "Install snyk"
+        run: npm install -g snyk
 
-  #     - name: "Authenticate snyk"
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-  #       run: snyk auth $SNYK_TOKEN
+      - name: "Authenticate snyk"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+        run: snyk auth $SNYK_TOKEN
 
-  #     - uses: actions/setup-python@v2
-  #       with:
-  #         python-version: "3.9.6"
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.9.6"
 
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: ~/.cache/pip
-  #         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-pip-
-  #           ${{ runner.os }}-
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            ${{ runner.os }}-
 
-  #     - name: "Install test dependencies"
-  #       run: |
-  #         pip install --upgrade pip setuptools wheel
-  #         pip install --requirement requirements/prod.txt
-  #         pip install --requirement requirements/test.txt
+      - name: "Install test dependencies"
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install --requirement requirements/prod.txt
+          pip install --requirement requirements/test.txt
 
-  #     - name: "Enable snyk test"
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-  #       run: snyk test --command=python3 --file=requirements/prod.txt --package-manager=pip
+      - name: "Enable snyk test"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+        run: snyk test --command=python3 --file=requirements/prod.txt --package-manager=pip
 
-  #     - name: "Enable snyk monitoring"
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-  #       run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
+      - name: "Enable snyk monitoring"
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+        run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
 
-  # build:
-  #   if: ${{ github.event_name == 'pull_request' }}
-  #   runs-on: "ubuntu-20.04"
-  #   needs:
-  #     - security
-  #   steps:
-  #     - uses: actions/checkout@v2
+  build:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: "ubuntu-20.04"
+    needs:
+      - security
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - name: "Build docker image"
-  #       run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+      - name: "Build docker image"
+        run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
 
   test:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: "ubuntu-20.04"
-    # needs:
-    #   - build
+    needs:
+      - build
     steps:
       - uses: actions/checkout@v2
 
@@ -132,5 +132,4 @@ jobs:
         run: |
           ls -lha
           docker image load --input gambley.tar.gz
-#          docker container run --rm gambley_backend:${{ github.sha }} python -V
-          docker container run --rm --env-file .env gambley_backend:${{ github.sha }} pytest --help
+         docker container run --rm gambley_backend:${{ github.sha }} pytest --help
