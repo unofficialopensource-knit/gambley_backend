@@ -115,7 +115,7 @@ jobs:
       - name: "Build docker image"
         run: |
           docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-          docker image save --output gambley_backend.tar.gz gambley_backend:${{ github.sha }} .
+          docker image save --output gambley_backend.tar.gz gambley_backend:${{ github.sha }}
 
   test:
     if: ${{ github.event_name == 'pull_request' }}
