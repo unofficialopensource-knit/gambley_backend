@@ -133,4 +133,4 @@ jobs:
           ls -lha
           docker image load --input gambley.tar.gz
 #          docker container run --rm gambley_backend:${{ github.sha }} python -V
-          docker container run --rm --env-file .env gambley_backend:${{ github.sha }} python -V
+          docker container run --rm --env-file .env gambley_backend:${{ github.sha }} pytest --help
