@@ -75,7 +75,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
         run: snyk auth $SNYK_TOKEN
-      
+
       - uses: actions/setup-python@v2
         with:
           python-version: "3.9.6"
@@ -92,6 +92,7 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install --requirement requirements/prod.txt
+          pip install --requirement requirements/test.txt
 
       - name: "Enable snyk test"
         env:
