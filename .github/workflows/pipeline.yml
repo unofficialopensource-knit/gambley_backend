@@ -113,7 +113,7 @@ jobs:
   #     - uses: actions/checkout@v2
 
   #     - name: "Build docker image"
-  #       run: docker build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+  #       run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
 
   test:
     if: ${{ github.event_name == 'pull_request' }}
@@ -124,7 +124,13 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: "Build docker image"
-        run: docker-compose build
+        run: |
+          docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+          docker image save --output gambley.tar.gz
 
       - name: "Runs unit test"
-        run: docker-compose ps
+        run: |
+          ls -lha
+          docker image load --input gambley.tar.gz
+#          docker container run --rm gambley_backend:${{ github.sha }} python -V
+          docker container run --rm --env-file .env gambley_backend:${{ github.sha }} python -V
