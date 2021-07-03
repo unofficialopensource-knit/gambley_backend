@@ -79,7 +79,7 @@ jobs:
       - name: "Enable snyk test"
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-        run: snyk test
+        run: snyk test --command python3
 
       # - name: "Enable snyk monitoring"
       #   env:
