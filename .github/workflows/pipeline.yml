@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - router/email/send-email
     paths:
       - .docker/*
       - .github/workflows/*.yml
