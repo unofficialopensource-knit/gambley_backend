@@ -9,5 +9,5 @@ def test_app():
 
 
 @fixture(scope="session")
-def test_client(test_app):
-    yield TestClient(test_app)
+def test_client(app):
+    yield TestClient(app)
