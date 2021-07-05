@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from .routers.health import router as health_router
 from .routers.email import router as email_router
+from .routers.health import router as health_router
 
 
 def create_app():
