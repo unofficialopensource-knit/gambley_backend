@@ -1,7 +1,6 @@
 .git/
 .github/
 .vscode/
-test/
 
 .docker/Dockerfile
 requirements/test.txt
