@@ -127,7 +127,7 @@ jobs:
       - name: "Runs unit test"
         run: |
           docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-          docker container run --rm gambley_backend:${{ github.sha }} pytest -c config/pyproject.toml
+          docker container run --rm -u root gambley_backend:${{ github.sha }} pytest -c config/pyproject.toml
 
   integration-test:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
