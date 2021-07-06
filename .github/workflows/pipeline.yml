@@ -124,10 +124,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: "Prepare test data directory"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
+        run: scripts/setup_test_data.sh
+
       - name: "Runs unit test"
         run: |
           docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-          docker container run --rm --user root gambley_backend:${{ github.sha }} pytest -c config/pyproject.toml
+          docker container run --rm --user root --volume $(pwd)/test-data:/app/test/test-data gambley_backend:${{ github.sha }} pytest -c config/pyproject.toml
 
   integration-test:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
