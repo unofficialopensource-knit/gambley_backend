@@ -14,4 +14,5 @@ def test_send_email_fails_request_validation(test_client, test_data):
     assert isinstance(response_data["detail"], list)
     assert test_data["invalid_attribute"] in response_data["detail"][0]["loc"]
 
+
 # Test email is sent 202 status code

@@ -18,8 +18,13 @@ async def send_email(background_task: BackgroundTasks, email: Email) -> UJSONRes
         subject=request_body.get("subject"),
         recipients=request_body.get("receiver"),
         subtype="html",
-        template_body=request_body.get("template_params")
+        template_body=request_body.get("template_params"),
     )
-    background_task.add_task(fast_mail.send_message, message, template_name=request_body.get("template_name"))
+    background_task.add_task(
+        fast_mail.send_message, message, template_name=request_body.get("template_name")
+    )
 
-    return UJSONResponse(status_code=202, content={"message": f"Sending email to {request_body.get('receiver')}"})
+    return UJSONResponse(
+        status_code=202,
+        content={"message": f"Sending email to {request_body.get('receiver')}"},
+    )
