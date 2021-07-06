@@ -1,7 +1,7 @@
-.git/
-.github/
+.git*/
 .vscode/
 
+*.toml
 .env*
 .docker/Dockerfile
 requirements/test.txt
