@@ -128,7 +128,14 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
-        run: scripts/setup_test_data.sh
+        # run: scripts/setup_test_data.sh
+        run: |
+          echo "Created test data directory"
+          mkdir test-data
+          cd test-data
+
+          echo "Copying test data to test data directory"
+          aws s3 cp s3://gambley-test-data/backend/email.json .
 
       - name: "Runs unit test"
         run: |
