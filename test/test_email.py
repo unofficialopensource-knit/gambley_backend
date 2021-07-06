@@ -1,6 +1,6 @@
 from pytest import mark
-
 from src.dependencies import fast_mail
+
 from .conftest import load_test_data
 
 
