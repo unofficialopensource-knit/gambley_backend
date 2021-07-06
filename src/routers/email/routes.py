@@ -26,5 +26,8 @@ async def send_email(background_task: BackgroundTasks, email: Email) -> UJSONRes
 
     return UJSONResponse(
         status_code=202,
-        content={"message": f"Sending email to {request_body.get('receiver')}"},
+        content={
+            "message": "Sending email in background",
+            "receiver": request_body.get("receiver"),
+        },
     )
