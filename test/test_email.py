@@ -31,7 +31,4 @@ def test_send_email_passes(test_client, test_data):
         assert isinstance(response_data["receiver"], list)
         assert len(response_data["receiver"]) == len(test_data["payload"]["receiver"])
 
-        assert len(outbox) == len(test_data["payload"]["receiver"])
-
-        for index, item in enumerate(outbox):
-            assert item["To"] == test_data["payload"]["receiver"][index]
+        assert outbox[0]["To"].split(", ") == test_data["payload"]["receiver"]
