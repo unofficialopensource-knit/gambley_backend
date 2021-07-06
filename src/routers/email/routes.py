@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post("/new", response_class=UJSONResponse, status_code=202)
-async def health(background_task: BackgroundTasks, email: Email) -> UJSONResponse:
+async def send_email(background_task: BackgroundTasks, email: Email) -> UJSONResponse:
     request_body = email.dict()
 
     message = MessageSchema(
