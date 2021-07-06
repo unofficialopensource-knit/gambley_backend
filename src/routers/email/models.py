@@ -1,9 +1,11 @@
+from typing import List
+
 from pydantic import BaseModel
+from pydantic import EmailStr
 
 
 class Email(BaseModel):
-    sender: str
-    receiver: str
+    receiver: List[EmailStr]
     subject: str
-    template_id: int
+    template_name: str
     template_params: dict
