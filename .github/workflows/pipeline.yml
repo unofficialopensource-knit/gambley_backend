@@ -134,10 +134,9 @@ jobs:
           echo "Created test data directory"
           mkdir test-data
           cd test-data
-          pwd
 
           echo "Copying test data to test data directory"
-          aws s3 ls
+          aws s3 ls --recursive s3://gambley-test-data
 
       - name: "Runs unit test"
         run: |
