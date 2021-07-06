@@ -3,7 +3,7 @@ from fastapi import BackgroundTasks
 from fastapi.responses import UJSONResponse
 from fastapi_mail import MessageSchema
 
-from src.dependencies import fast_mail
+from ...dependencies import fast_mail
 from .models import Email
 
 
