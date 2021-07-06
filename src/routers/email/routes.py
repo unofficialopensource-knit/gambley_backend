@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi.responses import UJSONResponse
