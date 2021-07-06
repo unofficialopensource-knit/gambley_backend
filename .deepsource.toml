@@ -35,3 +35,9 @@ name = "shell"
 enabled = true
   [analyzers.meta]
   dialect = "bash"
+
+[[analyzers]]
+name = "test-coverage"
+enabled = true
+  [analyzers.meta]
+  dialect = "bash"
