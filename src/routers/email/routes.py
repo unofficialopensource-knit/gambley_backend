@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter
 from fastapi import BackgroundTasks
 from fastapi.responses import UJSONResponse
@@ -10,7 +12,7 @@ from .models import Email
 router = APIRouter()
 
 
-@router.post("/new", response_class=UJSONResponse, status_code=201)
+@router.post("/new", response_class=UJSONResponse, status_code=202)
 async def health(background_task: BackgroundTasks, email: Email) -> UJSONResponse:
     request_body = email.dict()
 
