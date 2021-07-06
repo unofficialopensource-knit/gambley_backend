@@ -1,1 +1,4 @@
 .vscode/
+test/data/
+
+.env
