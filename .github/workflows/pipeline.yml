@@ -120,8 +120,8 @@ jobs:
   unit-test:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: "ubuntu-20.04"
-    needs:
-      - build
+    # needs:
+    #   - build
     steps:
       - uses: actions/checkout@v2
 
