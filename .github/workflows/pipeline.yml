@@ -131,9 +131,23 @@ jobs:
         run: scripts/setup_test_data.sh
 
       - name: "Runs unit test"
+        env:
+          DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
         run: |
-          docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-          docker container run --rm --user root --volume $(pwd)/test/data:/app/test/data gambley_backend:${{ github.sha }} pytest -c config/pyproject.toml
+          docker image build \
+            --file .docker/Dockerfile \
+            --tag gambley_backend:${{ github.sha }} \
+            .
+          touch $(pwd)/coverage.xml
+          docker container run \
+            --rm \
+            --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
+            --user root \
+            --volume $(pwd)/coverage.xml:/app/coverage.xml \
+            --volume $(pwd)/test/data:/app/test/data \
+            gambley_backend:${{ github.sha }} \
+            pytest -c config/pyproject.toml
+          scripts/upload_coverage.sh
 
   integration-test:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -143,8 +157,15 @@ jobs:
 
       - name: "Runs Integration test"
         run: |
-          docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-          docker container run --rm gambley_backend:${{ github.sha }} pytest --help
+          docker image build \
+            --file .docker/Dockerfile \
+            --tag gambley_backend:${{ github.sha }} \
+            .
+          docker container run \
+            --rm \
+            --user root \
+            gambley_backend:${{ github.sha }} \
+            pytest --help
 
   deploy:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release' }}

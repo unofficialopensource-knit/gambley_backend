@@ -21,4 +21,4 @@ py_version = 39
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = "test"
-addopts = "--cov-config=config/setup.cfg --strict-config --verbose --code-highlight yes --cov src --cov-report term"
+addopts = "--cov-config=config/setup.cfg --strict-config --verbose --code-highlight yes --cov src --cov-report xml"
