@@ -170,6 +170,8 @@ jobs:
   deploy-staging:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: "ubuntu-20.04"
+    needs:
+      - integration-test
     steps:
       - uses: actions/checkout@v2
 
