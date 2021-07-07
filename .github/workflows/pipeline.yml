@@ -141,6 +141,7 @@ jobs:
             --file .docker/Dockerfile \
             --tag gambley_backend:${{ github.sha }} \
             .
+          touch $(pwd)/coverage.xml
           docker container run \
           --rm \
           --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
