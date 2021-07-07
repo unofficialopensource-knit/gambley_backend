@@ -145,6 +145,7 @@ jobs:
           --rm \
           --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
           --user root \
+          --volume $(pwd)/.git:/app/.git \
           --volume $(pwd)/test/data:/app/test/data \
           gambley_backend:${{ github.sha }} \
           /app/scripts/test_coverage.sh
