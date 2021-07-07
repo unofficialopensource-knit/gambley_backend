@@ -167,8 +167,8 @@ jobs:
             gambley_backend:${{ github.sha }} \
             pytest --help
 
-  deploy:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release' }}
+  deploy-staging:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
