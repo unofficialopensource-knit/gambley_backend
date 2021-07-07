@@ -191,3 +191,24 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:release --app gambley-backend-web web
+
+  deploy-production:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release' }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Login to ECR"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
+        run: aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 783729352349.dkr.ecr.ap-south-1.amazonaws.com
+
+      - name: "Build docker image"
+        run: docker build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+
+      - name: "Tag docker image"
+        run: docker tag gambley_backend:${{ github.sha }} 783729352349.dkr.ecr.ap-south-1.amazonaws.com/gambley_backend:${{ github.sha }}
+
+      - name: "Push docker image"
+        run: docker push 783729352349.dkr.ecr.ap-south-1.amazonaws.com/gambley_backend:${{ github.sha }}
