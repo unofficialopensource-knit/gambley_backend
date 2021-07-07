@@ -131,9 +131,11 @@ jobs:
         run: scripts/setup_test_data.sh
 
       - name: "Runs unit test"
+        env:
+          DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
         run: |
           docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
-          docker container run --rm --user root --volume $(pwd)/test/data:/app/test/data gambley_backend:${{ github.sha }} pytest -c config/pyproject.toml
+          docker container run --rm --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN --user root --volume $(pwd)/test/data:/app/test/data gambley_backend:${{ github.sha }} /app/scripts/test_coverage.sh
 
   integration-test:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
