@@ -140,13 +140,13 @@ jobs:
             .
           touch $(pwd)/coverage.xml
           docker container run \
-          --rm \
-          --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
-          --user root \
-          --volume $(pwd)/coverage.xml:/app/coverage.xml \
-          --volume $(pwd)/test/data:/app/test/data \
-          gambley_backend:${{ github.sha }} \
-          pytest -c config/pyproject.toml
+            --rm \
+            --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
+            --user root \
+            --volume $(pwd)/coverage.xml:/app/coverage.xml \
+            --volume $(pwd)/test/data:/app/test/data \
+            gambley_backend:${{ github.sha }} \
+            pytest -c config/pyproject.toml
           scripts/upload_coverage.sh
 
   integration-test:
