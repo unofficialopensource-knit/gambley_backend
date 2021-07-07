@@ -1,7 +1,11 @@
 #!/bin/bash
 
+cd /app
 
 pytest -c config/pyproject.toml
+
+apt-get update
+apt-get install curl
 
 curl https://deepsource.io/cli | sh
 
