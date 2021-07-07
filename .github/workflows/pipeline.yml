@@ -145,10 +145,11 @@ jobs:
           --rm \
           --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
           --user root \
-          --volume $(pwd)/.git:/app/.git \
+          --volume $(pwd)/coverage.xml:/app/coverage.xml \
           --volume $(pwd)/test/data:/app/test/data \
           gambley_backend:${{ github.sha }} \
-          /app/scripts/test_coverage.sh
+          pytest -c config/pyproject.toml
+          scripts/upload_coverage.sh
 
   integration-test:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
