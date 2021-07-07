@@ -2,11 +2,11 @@ version = 1
 
 exclude_patterns = [
   "config/**",
-  "tests/**"
+  "test/**"
 ]
 
 test_patterns = [
-  "tests/**"
+  "test/**"
 ]
 
 [[analyzers]]
@@ -35,3 +35,7 @@ name = "shell"
 enabled = true
   [analyzers.meta]
   dialect = "bash"
+
+[[analyzers]]
+name = "test-coverage"
+enabled = true
