@@ -193,7 +193,8 @@ jobs:
         run: heroku container:release --app gambley-backend-web web
 
   deploy-production:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release' }}
+    if: ${{ github.event_name == 'pull_request' }}
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/release' }}
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
@@ -212,3 +213,16 @@ jobs:
 
       - name: "Push docker image"
         run: docker push 783729352349.dkr.ecr.ap-south-1.amazonaws.com/gambley_backend:${{ github.sha }}
+
+      - name: "Run deployment script"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          IMAGE_TAG: ${{ github.sha }}
+          GAMBLEY_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          GAMBLEY_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        run: |
+          aws s3 cp s3://gambley-infra-data/private_keys/id_gambley .
+          ssh -i id_gambley "$SSH_USER"@"$SSH_HOST" < script/deploy_prod.sh
