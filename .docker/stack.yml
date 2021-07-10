@@ -1,0 +1,28 @@
+version: "3.8"
+
+networks:
+  backend:
+    name: "gambley_backend"
+
+secrets:
+  mail_username:
+  mail_password:
+  supress_send:
+
+services:
+  backend:
+    image: 783729352349.dkr.ecr.ap-south-1.amazonaws.com/gambley_backend:BACKEND_IMAGE_TAG
+    networks:
+      - backend
+    ports:
+      - 8000:8000
+    secrets:
+      - mail_username
+      - mail_password
+      - supress_send
+    deploy:
+      replicas: 1
+    environment:
+      MAIL_USERNAME: /run/secrets/mail_username
+      MAIL_PASSWORD: /run/secrets/mail_password
+      SUPPRESS_SEND: /run/secrets/supress_send
