@@ -8,7 +8,7 @@ from src.app import create_app
 
 @fixture(scope="session")
 def test_app():
-    environ["SUPRESS_SEND"] = 1
+    environ["SUPRESS_SEND"] = "1"
     yield create_app()
 
 
