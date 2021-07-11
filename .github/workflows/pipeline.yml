@@ -218,13 +218,12 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
-          # SSH_USER: ${{ secrets.SSH_USER }}
-          # SSH_HOST: ${{ secrets.SSH_HOST }}
           IMAGE_TAG: ${{ github.sha }}
           GAMBLEY_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           GAMBLEY_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           aws s3 cp s3://gambley-infra-data/private_keys/id_gambley .
           chmod 400 id_gambley
+          sed --in-place "s/BACKEND_IMAGE_TAG/$IMAGE_TAG/g" .docker/stack.yml
           ssh -i id_gambley -o StrictHostKeyChecking=no ubuntu@3.109.12.202 < scripts/deploy_prod.sh
           rm id_gambley
