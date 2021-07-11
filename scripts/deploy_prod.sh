@@ -1,18 +1,9 @@
 #!/bin/bash
 
-# while IFS='=' read -r -d '' SECRET VALUE;
-# do
-#     if [[ $SECRET == "GAMBLEY_*" ]];
-#     then
-#         SECRET_NAME=${SECRET/#GAMBLEY_}
-#         echo $SECRET_NAME
-#         echo "$VALUE" | sudo docker secret create "$SECRET_NAME"
-#     fi
-# done < <(env -0)
-
-# create_secret 
-
 # sudo docker stack deploy --compose-file .docker/stack.yml --orchestrator swarm gambley
+cd /tmp
 
-echo $GAMBLEY_MAIL_USERNAME, 123
-echo $MAIL_USERNAME, 456
+aws s3 cp s3://gambley-app-data/configs/gambley.env .
+aws s3 cp s3://gambley-app-data/stack/gambley-stack.yml .
+
+ls -lha
