@@ -225,4 +225,4 @@ jobs:
           GAMBLEY_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           aws s3 cp s3://gambley-infra-data/private_keys/id_gambley .
-          ssh -i id_gambley "$SSH_USER"@"$SSH_HOST" < scriptS/deploy_prod.sh
+          ssh -i id_gambley "$SSH_USER"@"$SSH_HOST" < scripts/deploy_prod.sh
