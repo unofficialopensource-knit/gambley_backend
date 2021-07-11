@@ -8,7 +8,7 @@ do
     then
         SECRET_NAME=${SECRET/#GAMBLEY_}
         echo $SECRET_NAME
-        echo $VALUE | sudo docker secret create $SECRET_NAME
+        echo "$VALUE" | sudo docker secret create "$SECRET_NAME"
     fi
 done < <(env -0)
 
