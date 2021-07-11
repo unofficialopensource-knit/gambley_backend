@@ -1,17 +1,18 @@
 #!/bin/bash
 
-hostname -i
+# while IFS='=' read -r -d '' SECRET VALUE;
+# do
+#     if [[ $SECRET == "GAMBLEY_*" ]];
+#     then
+#         SECRET_NAME=${SECRET/#GAMBLEY_}
+#         echo $SECRET_NAME
+#         echo "$VALUE" | sudo docker secret create "$SECRET_NAME"
+#     fi
+# done < <(env -0)
 
-while IFS='=' read -r -d '' SECRET VALUE;
-do
-    if [[ $SECRET == "GAMBLEY_*" ]];
-    then
-        SECRET_NAME=${SECRET/#GAMBLEY_}
-        echo $SECRET_NAME
-        echo "$VALUE" | sudo docker secret create "$SECRET_NAME"
-    fi
-done < <(env -0)
+# create_secret 
 
-sed --in-place "s/BACKEND_IMAGE_TAG/$IMAGE_TAG/g" .docker/stack.yml
+# sudo docker stack deploy --compose-file .docker/stack.yml --orchestrator swarm gambley
 
-sudo docker stack deploy --compose-file .docker/stack.yml --orchestrator swarm
+echo $GAMBLEY_MAIL_USERNAME, 123
+echo $MAIL_USERNAME, 456
