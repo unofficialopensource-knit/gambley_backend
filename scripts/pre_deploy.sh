@@ -7,4 +7,4 @@ sed --in-place "s/BACKEND_IMAGE_TAG/$IMAGE_TAG/g" .docker/stack.yml
 echo "GAMBLEY_MAIL_USERNAME=$GAMBLEY_MAIL_USERNAME" >> .env
 echo "GAMBLEY_MAIL_PASSWORD=$GAMBLEY_MAIL_PASSWORD" >> .env
 
-scp -i id_gambley .env ubunut@3.109.12.202:/tmp/gambley.env
+scp -i id_gambley -o StrictHostKeyChecking=no .env ubunut@3.109.12.202:/tmp/gambley.env
