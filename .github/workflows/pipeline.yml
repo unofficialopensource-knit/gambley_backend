@@ -225,4 +225,5 @@ jobs:
           GAMBLEY_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           aws s3 cp s3://gambley-infra-data/private_keys/id_gambley .
+          chmod 400 id_gambley
           ssh -i id_gambley -o StrictHostKeyChecking=no ubuntu@3.109.12.202 < scripts/deploy_prod.sh
