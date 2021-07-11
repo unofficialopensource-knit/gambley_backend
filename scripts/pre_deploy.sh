@@ -4,7 +4,8 @@ aws s3 cp s3://gambley-infra-data/private_keys/id_gambley .
 chmod 400 id_gambley
 sed --in-place "s/BACKEND_IMAGE_TAG/$IMAGE_TAG/g" .docker/stack.yml
 
-# echo "GAMBLEY_MAIL_USERNAME=$GAMBLEY_MAIL_USERNAME" >> .env
-# echo "GAMBLEY_MAIL_PASSWORD=$GAMBLEY_MAIL_PASSWORD" >> .env
+echo "GAMBLEY_MAIL_USERNAME=$GAMBLEY_MAIL_USERNAME" >> gambley.env
+echo "GAMBLEY_MAIL_PASSWORD=$GAMBLEY_MAIL_PASSWORD" >> gambley.env
 
-# scp -o StrictHostKeyChecking=no -i id_gambley .env ubunut@3.109.12.202:/tmp/gambley.env
+aws s3 cp gambley.env s3://gambley-test-data/configs/gambley.env
+aws s3 cp .docker/stack.yml s3://gambley-test-data/stack/gambley-stack.yml
