@@ -1,0 +1,17 @@
+version: "3.8"
+
+networks:
+  backend:
+    name: "gambley_backend"
+
+services:
+  backend:
+    image: 783729352349.dkr.ecr.ap-south-1.amazonaws.com/gambley_backend:BACKEND_IMAGE_TAG
+    env_file:
+      - /tmp/gambley.env
+    networks:
+      - backend
+    ports:
+      - 80:8000
+    deploy:
+      replicas: 1
