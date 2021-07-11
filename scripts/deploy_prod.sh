@@ -14,5 +14,4 @@
 
 # sudo docker stack deploy --compose-file .docker/stack.yml --orchestrator swarm gambley
 
-echo $GAMBLEY_MAIL_USERNAME, 123
-echo $MAIL_USERNAME, 456
+ls -lha /tmp/gambley.env
