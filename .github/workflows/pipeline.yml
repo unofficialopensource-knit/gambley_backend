@@ -24,173 +24,173 @@ on:
       - tests/**/*.py
 
 jobs:
-  lint:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: "ubuntu-20.04"
-    steps:
-      - uses: actions/checkout@v2
+  # lint:
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   runs-on: "ubuntu-20.04"
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.9.6"
+  #     - uses: actions/setup-python@v2
+  #       with:
+  #         python-version: "3.9.6"
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-            ${{ runner.os }}-
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: ~/.cache/pip
+  #         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-pip-
+  #           ${{ runner.os }}-
 
-      - name: "Install test dependencies"
-        run: |
-          pip install --upgrade pip setuptools wheel
-          pip install --requirement requirements/test.txt
-          pip install --requirement requirements/prod.txt
+  #     - name: "Install test dependencies"
+  #       run: |
+  #         pip install --upgrade pip setuptools wheel
+  #         pip install --requirement requirements/test.txt
+  #         pip install --requirement requirements/prod.txt
 
-      - name: "Run black for formatting"
-        run: black --config config/pyproject.toml .
+  #     - name: "Run black for formatting"
+  #       run: black --config config/pyproject.toml .
 
-      - name: "Run flake8 for linting"
-        run: flake8 --config config/setup.cfg .
+  #     - name: "Run flake8 for linting"
+  #       run: flake8 --config config/setup.cfg .
 
-      - name: "Run isort for imports formatting"
-        run: isort --check --settings-file config/pyproject.toml .
+  #     - name: "Run isort for imports formatting"
+  #       run: isort --check --settings-file config/pyproject.toml .
 
-  security:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: "ubuntu-20.04"
-    needs:
-      - lint
-    steps:
-      - uses: actions/checkout@v2
+  # security:
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   runs-on: "ubuntu-20.04"
+  #   needs:
+  #     - lint
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "14.16.1"
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: "14.16.1"
 
-      - name: "Install snyk"
-        run: npm install -g snyk
+  #     - name: "Install snyk"
+  #       run: npm install -g snyk
 
-      - name: "Authenticate snyk"
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-        run: snyk auth $SNYK_TOKEN
+  #     - name: "Authenticate snyk"
+  #       env:
+  #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+  #       run: snyk auth $SNYK_TOKEN
 
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.9.6"
+  #     - uses: actions/setup-python@v2
+  #       with:
+  #         python-version: "3.9.6"
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-            ${{ runner.os }}-
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: ~/.cache/pip
+  #         key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-pip-
+  #           ${{ runner.os }}-
 
-      - name: "Install test dependencies"
-        run: |
-          pip install --upgrade pip setuptools wheel
-          pip install --requirement requirements/prod.txt
-          pip install --requirement requirements/test.txt
+  #     - name: "Install test dependencies"
+  #       run: |
+  #         pip install --upgrade pip setuptools wheel
+  #         pip install --requirement requirements/prod.txt
+  #         pip install --requirement requirements/test.txt
 
-      - name: "Enable snyk test"
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-        run: snyk test --command=python3 --file=requirements/prod.txt --package-manager=pip
+  #     - name: "Enable snyk test"
+  #       env:
+  #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+  #       run: snyk test --command=python3 --file=requirements/prod.txt --package-manager=pip
 
-      - name: "Enable snyk monitoring"
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
-        run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
+  #     - name: "Enable snyk monitoring"
+  #       env:
+  #         SNYK_TOKEN: ${{ secrets.SNYK_SECRET_KEY }}
+  #       run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
 
-  build:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: "ubuntu-20.04"
-    needs:
-      - security
-    steps:
-      - uses: actions/checkout@v2
+  # build:
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   runs-on: "ubuntu-20.04"
+  #   needs:
+  #     - security
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: "Build docker image"
-        run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
+  #     - name: "Build docker image"
+  #       run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
 
-  unit-test:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: "ubuntu-18.04"
-    needs:
-      - build
-    steps:
-      - uses: actions/checkout@v2
+  # unit-test:
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   runs-on: "ubuntu-18.04"
+  #   needs:
+  #     - build
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: "Prepare test data directory"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
-        run: scripts/setup_test_data.sh
+  #     - name: "Prepare test data directory"
+  #       env:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
+  #       run: scripts/setup_test_data.sh
 
-      - name: "Runs unit test"
-        env:
-          DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
-        run: |
-          docker image build \
-            --file .docker/Dockerfile \
-            --tag gambley_backend:${{ github.sha }} \
-            .
-          touch $(pwd)/coverage.xml
-          docker container run \
-            --rm \
-            --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
-            --user root \
-            --volume $(pwd)/coverage.xml:/app/coverage.xml \
-            --volume $(pwd)/test/data:/app/test/data \
-            gambley_backend:${{ github.sha }} \
-            pytest -c config/pyproject.toml
-          scripts/upload_coverage.sh
+  #     - name: "Runs unit test"
+  #       env:
+  #         DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
+  #       run: |
+  #         docker image build \
+  #           --file .docker/Dockerfile \
+  #           --tag gambley_backend:${{ github.sha }} \
+  #           .
+  #         touch $(pwd)/coverage.xml
+  #         docker container run \
+  #           --rm \
+  #           --env DEEPSOURCE_DSN=$DEEPSOURCE_DSN \
+  #           --user root \
+  #           --volume $(pwd)/coverage.xml:/app/coverage.xml \
+  #           --volume $(pwd)/test/data:/app/test/data \
+  #           gambley_backend:${{ github.sha }} \
+  #           pytest -c config/pyproject.toml
+  #         scripts/upload_coverage.sh
 
-  integration-test:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    runs-on: "ubuntu-20.04"
-    steps:
-      - uses: actions/checkout@v2
+  # integration-test:
+  #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  #   runs-on: "ubuntu-20.04"
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: "Runs Integration test"
-        run: |
-          docker image build \
-            --file .docker/Dockerfile \
-            --tag gambley_backend:${{ github.sha }} \
-            .
-          docker container run \
-            --rm \
-            --user root \
-            gambley_backend:${{ github.sha }} \
-            pytest --help
+  #     - name: "Runs Integration test"
+  #       run: |
+  #         docker image build \
+  #           --file .docker/Dockerfile \
+  #           --tag gambley_backend:${{ github.sha }} \
+  #           .
+  #         docker container run \
+  #           --rm \
+  #           --user root \
+  #           gambley_backend:${{ github.sha }} \
+  #           pytest --help
 
-  deploy-staging:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    runs-on: "ubuntu-20.04"
-    needs:
-      - integration-test
-    steps:
-      - uses: actions/checkout@v2
+  # deploy-staging:
+  #   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  #   runs-on: "ubuntu-20.04"
+  #   needs:
+  #     - integration-test
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: "Logs in Heroku Container Registry"
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:login
+  #     - name: "Logs in Heroku Container Registry"
+  #       env:
+  #         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  #       run: heroku container:login
 
-      - name: "Build & Push the image"
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: |
-          cp .docker/Dockerfile .
-          heroku container:push --app gambley-backend-web web
+  #     - name: "Build & Push the image"
+  #       env:
+  #         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  #       run: |
+  #         cp .docker/Dockerfile .
+  #         heroku container:push --app gambley-backend-web web
 
-      - name: "Release the image"
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release --app gambley-backend-web web
+  #     - name: "Release the image"
+  #       env:
+  #         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  #       run: heroku container:release --app gambley-backend-web web
 
   deploy-production:
     if: ${{ github.event_name == 'pull_request' }}
@@ -225,4 +225,4 @@ jobs:
           GAMBLEY_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
         run: |
           aws s3 cp s3://gambley-infra-data/private_keys/id_gambley .
-          ssh -i id_gambley "$SSH_USER"@"$SSH_HOST" < script/deploy_prod.sh
+          ssh -i id_gambley "$SSH_USER"@"$SSH_HOST" < scriptS/deploy_prod.sh
