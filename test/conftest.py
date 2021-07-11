@@ -1,4 +1,5 @@
 from json import load
+from os import environ
 
 from fastapi.testclient import TestClient
 from pytest import fixture
@@ -7,6 +8,7 @@ from src.app import create_app
 
 @fixture(scope="session")
 def test_app():
+    environ["SUPRESS_SEND"] = "1"
     yield create_app()
 
 
