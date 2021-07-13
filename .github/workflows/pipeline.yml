@@ -60,8 +60,6 @@ jobs:
   security:
     if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' }}
     runs-on: "ubuntu-20.04"
-    needs:
-      - lint
     steps:
       - uses: actions/checkout@v2
 
@@ -108,8 +106,6 @@ jobs:
   build:
     if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' }}
     runs-on: "ubuntu-20.04"
-    needs:
-      - security
     steps:
       - uses: actions/checkout@v2
 
