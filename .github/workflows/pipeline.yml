@@ -115,6 +115,8 @@ jobs:
   unit-test:
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: "ubuntu-18.04"
+    needs:
+      - build
     steps:
       - uses: actions/checkout@v2
 
@@ -145,8 +147,6 @@ jobs:
 
   integration-test:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    needs:
-      - unit-test
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
@@ -166,6 +166,8 @@ jobs:
   deploy-staging:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: "ubuntu-20.04"
+    needs:
+      - integration-test
     steps:
       - uses: actions/checkout@v2
 
