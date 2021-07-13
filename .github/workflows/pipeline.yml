@@ -124,8 +124,8 @@ jobs:
 
       - name: "Prepare test data directory"
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SERVICE_MANAGEMENT_USER_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SERVICE_MANAGEMENT_USER_AWS_SECRET_KEY }}
         run: scripts/setup_test_data.sh
 
       - name: "Runs unit test"
@@ -200,8 +200,8 @@ jobs:
 
       - name: "Login to ECR"
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SERVICE_MANAGEMENT_USER_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SERVICE_MANAGEMENT_USER_AWS_SECRET_KEY }}
         run: aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 783729352349.dkr.ecr.ap-south-1.amazonaws.com
 
       - name: "Build docker image"
@@ -215,8 +215,8 @@ jobs:
 
       - name: "Run deployment script"
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.GAMBLEY_CD_USER_AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.GAMBLEY_CD_USER_AWS_SECRET_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.SERVICE_MANAGEMENT_USER_AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SERVICE_MANAGEMENT_USER_AWS_SECRET_KEY }}
           IMAGE_TAG: ${{ github.sha }}
           GAMBLEY_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           GAMBLEY_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
