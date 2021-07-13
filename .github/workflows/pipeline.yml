@@ -25,7 +25,7 @@ on:
 
 jobs:
   lint:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' }}
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +58,7 @@ jobs:
         run: isort --check --settings-file config/pyproject.toml .
 
   security:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' }}
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
@@ -104,7 +104,7 @@ jobs:
         run: snyk monitor --command=python3 --file=requirements/prod.txt --package-manager=pip
 
   build:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' }}
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
@@ -113,10 +113,8 @@ jobs:
         run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
 
   unit-test:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'release') }}
     runs-on: "ubuntu-18.04"
-    needs:
-      - build
     steps:
       - uses: actions/checkout@v2
 
@@ -146,7 +144,9 @@ jobs:
           scripts/upload_coverage.sh
 
   integration-test:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'release' }}
+    needs:
+      - unit-test
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
@@ -166,8 +166,6 @@ jobs:
   deploy-staging:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: "ubuntu-20.04"
-    needs:
-      - integration-test
     steps:
       - uses: actions/checkout@v2
 
