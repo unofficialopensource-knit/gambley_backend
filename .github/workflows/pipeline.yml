@@ -148,7 +148,9 @@ jobs:
           scripts/upload_coverage.sh
 
   integration-test:
-    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'release') }}
+    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'release' }}
+    needs:
+      - unit-test
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
