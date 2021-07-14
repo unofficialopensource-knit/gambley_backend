@@ -113,7 +113,9 @@ jobs:
         run: docker image build --file .docker/Dockerfile --tag gambley_backend:${{ github.sha }} .
 
   unit-test:
-    if: ${{ github.event_name == 'pull_request' && (github.base_ref == 'main' || github.base_ref == 'release') }}
+    if: ${{ github.event_name == 'pull_request' }}
+    needs:
+      - build
     runs-on: "ubuntu-18.04"
     steps:
       - uses: actions/checkout@v2
@@ -144,9 +146,7 @@ jobs:
           scripts/upload_coverage.sh
 
   integration-test:
-    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'release' }}
-    needs:
-      - unit-test
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v2
