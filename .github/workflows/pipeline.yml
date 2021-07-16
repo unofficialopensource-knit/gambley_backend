@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - api/users
     paths:
       - .docker/*
       - .github/workflows/*.yml
