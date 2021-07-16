@@ -15,7 +15,7 @@ mail_config = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
     TEMPLATE_FOLDER="templates",
-    SUPPRESS_SEND=getenv("SUPPRESS_SEND", 0),
+    SUPPRESS_SEND=0,
 )
 
 
