@@ -15,7 +15,7 @@ mail_config = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
     TEMPLATE_FOLDER="templates",
-    SUPPRESS_SEND=0,
+    SUPPRESS_SEND=getenv("GAMBLEY_SUPRESS_SEND", 0)
 )
 
 

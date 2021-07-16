@@ -8,7 +8,7 @@ from src.app import create_app
 
 @fixture(scope="session")
 def test_app():
-    environ["SUPRESS_SEND"] = "1"
+    environ["GAMBLEY_SUPRESS_SEND"] = "1"
     environ["GAMBLEY_MAIL_USERNAME"] = "test_user"
     environ["GAMBLEY_MAIL_USERNAME"] = "test_password"
     yield create_app()
