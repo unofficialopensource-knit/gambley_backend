@@ -4,8 +4,8 @@ from fastapi_mail import ConnectionConfig
 
 
 mail_config = ConnectionConfig(
-    MAIL_USERNAME=getenv("MAIL_USERNAME", "test_user"),
-    MAIL_PASSWORD=getenv("MAIL_PASSWORD", "test_password"),
+    MAIL_USERNAME=getenv("GAMBLEY_MAIL_USERNAME"),
+    MAIL_PASSWORD=getenv("GAMBLEY_MAIL_PASSWORD"),
     MAIL_FROM="admin@rinnegan.io",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
@@ -15,7 +15,7 @@ mail_config = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
     TEMPLATE_FOLDER="templates",
-    SUPPRESS_SEND=getenv("SUPPRESS_SEND", 0),
+    SUPPRESS_SEND=getenv("GAMBLEY_SUPRESS_SEND", 0)
 )
 
 
