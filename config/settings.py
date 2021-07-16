@@ -17,3 +17,7 @@ mail_config = ConnectionConfig(
     TEMPLATE_FOLDER="templates",
     SUPPRESS_SEND=getenv("SUPPRESS_SEND", 0),
 )
+
+
+class ServiceConfig:
+    SQLALCHEMY_DATABASE_URL = getenv("GAMBLEY_DATABASE_URL")
