@@ -1,7 +1,7 @@
 FROM python:3.9.6-slim
 
 RUN apt-get update \
-    && apt-get install --assume-yes libpq-dev gcc \
+    && apt-get install --assume-yes libpq-dev=11.12-0+deb10u1 gcc=4:8.3.0-1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
