@@ -5,6 +5,7 @@ from sqlalchemy import DateTime
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
 
+
 Base = declarative_base()
 
 
@@ -13,3 +14,8 @@ class AnalyticsMixin(Base):
     last_sign_in_on = Column(DateTime, default=datetime.utcnow)
     current_sign_in_ip = Column(String)
     last_sign_in_ip = Column(String)
+
+
+class UpdatesMixin(Base):
+    created_on = Column(DateTime, default=datetime.utcnow)
+    updated_on = Column(DateTime, default=datetime.utcnow)
