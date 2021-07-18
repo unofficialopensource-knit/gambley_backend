@@ -4,14 +4,14 @@ from fastapi.responses import UJSONResponse
 from fastapi_mail import MessageSchema
 
 from ...dependencies import fast_mail
-from .models import Email
+from .schema import EmailSchema
 
 
 router = APIRouter()
 
 
 @router.post("/new", response_class=UJSONResponse, status_code=202)
-async def send_email(background_task: BackgroundTasks, email: Email) -> UJSONResponse:
+async def send_email(background_task: BackgroundTasks, email: EmailSchema) -> UJSONResponse:
     request_body = email.dict()
 
     message = MessageSchema(
